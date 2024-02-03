@@ -16,16 +16,17 @@ def browser_mobile(request):
     browser.config.window_height = height
 
 
-@pytest.fixture(params=[(1920, 1080), (1280, 720), (1600, 900), (800, 480), (480, 360),  (390, 844)])
+@pytest.fixture(scope='session', params=[(1920, 1080), (1280, 720), (1600, 900), (800, 480), (480, 360),  (390, 844)])
 def check_browser(request):
     resolution = request.param
     width, height = resolution
     browser.config.window_width = width
     browser.config.window_height = height
-    if resolution in [(1920, 1080), (1280, 720), (1600, 900)]:
-        return True
-    elif resolution in [(800, 480), (480, 360), (390, 844)]:
-        return False
+    if width <= 1010:
+        yield "mobile"
 
-    yield browser
+        browser.quit()
+    else:
+        yield 'desktop'
+
     browser.quit()
