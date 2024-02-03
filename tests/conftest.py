@@ -2,32 +2,30 @@ import pytest
 from selene import browser
 
 
-@pytest.fixture(scope='function', autouse=True)
-def browser_management(request):
-    browser.config.base_url = 'https://github.com'
-
-
 @pytest.fixture(params=[(1920, 1080), (1280, 720)])
-def desktop_browser(request):
+def browser_desktop(request):
     width, height = request.param
     browser.config.window_width = width
     browser.config.window_height = height
 
 
 @pytest.fixture(params=[(800, 480), (480, 360)])
-def mobile_browser(request):
+def browser_mobile(request):
     width, height = request.param
     browser.config.window_width = width
     browser.config.window_height = height
 
 
-@pytest.fixture(params=[(1920, 1080), (1280, 720), (800, 480), (480, 360)])
-def is_desktop_browser(request):
+@pytest.fixture(params=[(1920, 1080), (1280, 720), (1600, 900), (800, 480), (480, 360),  (390, 844)])
+def check_browser(request):
     resolution = request.param
     width, height = resolution
     browser.config.window_width = width
     browser.config.window_height = height
-    if resolution in [(1920, 1080), (1280, 720)]:
+    if resolution in [(1920, 1080), (1280, 720), (1600, 900)]:
         return True
-    else:
+    elif resolution in [(800, 480), (480, 360), (390, 844)]:
         return False
+
+    yield browser
+    browser.quit()
